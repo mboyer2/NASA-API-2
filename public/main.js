@@ -1,5 +1,6 @@
 $(document).ready(function(){
 var obj = {}
+var dangerousAsteroids = []
 var asteroidName = []
 var asteroidDiameter=[]
 var velocity=[]
@@ -23,54 +24,44 @@ $('#button').on('click', function(event){
 		for(let day in neo) {
 
 			for(let asteroid of neo[day]) {
+
+				let tempAsteroid = {}
+
+
+
         		
 		    if(asteroid.is_potentially_hazardous_asteroid === true) {
-		            asteroidName.push(asteroid.name)
+		            tempAsteroid.name = asteroid.name
 
 		        if(asteroid.estimated_diameter.feet) {
-	                asteroidDiameter.push(asteroid.estimated_diameter.feet.estimated_diameter_max)
+	                tempAsteroid.diameter = asteroid.estimated_diameter.feet.estimated_diameter_max
 	            	}
 	            if(asteroid.close_approach_data['0'].relative_velocity) {
-	                velocity.push(asteroid.close_approach_data['0'].relative_velocity.miles_per_hour)
+	                tempAsteroid.velocity = asteroid.close_approach_data['0'].relative_velocity.miles_per_hour
 	            	}
 		    	if(asteroid.close_approach_data['0'].miss_distance) {
-	                distance.push(asteroid.close_approach_data['0'].miss_distance.miles)
+	                tempAsteroid.distance = asteroid.close_approach_data['0'].miss_distance.miles
+
+	                dangerousAsteroids.push(tempAsteroid)
+
+
 	            	}
-				}
-		    }
-		}
-		//this creates an object of asteroidsNames with key:value velocity, distance, and diameter
-		for(var i=0;i<asteroidName.length;i++) {
-    		obj[asteroidName[i]] = {
-        			Velocity: velocity[i],
-        			Distance: distance[i],
-        			Diameter: asteroidDiameter[i]
+	            }
 			}
 		}
 
-		var jsonString = JSON.stringify(obj)
-		var jsonArray = JSON.parse(jsonString)
+		console.log(dangerousAsteroids)
 
-		//below loops through elements of an array
-		var result=''
+		var container =
 
-		//im so close, i just cant get the name
-		$.each(jsonArray, function(i,item){
-			result += 'name=' + '<br>'
-			result += 'Velocity=' + item.Velocity + '<br>'
-			result += 'Diameter=' + item.Diameter + '<br>'
-			result += 'Distance from earth=' + item.Distance + '<br><br>'
-			
-
-
-		})
-		$('#display').html(result)
-
-		console.log(obj)
-
-		
-		
-
+		for (var i = 0; i<dangerousAsteroids.length; i++){
+			$('#container').append(`
+				<div id="name">name= ${dangerousAsteroids[i].name} </div>
+				<div id="diameter">diameter= ${dangerousAsteroids[i].diameter} </div>
+				<div id="distance">distance= ${dangerousAsteroids[i].distance} </div>
+				<div id="velocity">velocity= ${dangerousAsteroids[i].velocity} </div>
+				<br>`)
+			}
 		})
 	})
 })
